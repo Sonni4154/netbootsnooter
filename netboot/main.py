@@ -2,10 +2,12 @@
 from __future__ import annotations
 
 import logging
+import time
 from pathlib import Path
 
 from .agents.network import NetworkScrapeAgent
 from .agents.doc_agent import DocAgent
+from .agents.boot_server import BootServerAgent
 
 LOG_DIR = Path("logs")
 LOG_DIR.mkdir(exist_ok=True)
@@ -26,6 +28,15 @@ def main() -> None:
 
     doc_agent = DocAgent()
     doc_agent.run()
+
+    boot_agent = BootServerAgent()
+    boot_agent.run()
+    try:
+        while True:
+            time.sleep(60)
+            boot_agent.ensure_running()
+    except KeyboardInterrupt:
+        boot_agent.stop()
 
 
 if __name__ == "__main__":
